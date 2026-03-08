@@ -39,7 +39,7 @@ export default function PostCard({ post, deleting, onDelete }: PostCardProps) {
 
   const { user } = useAuth();
 
-  const [editing, setEditing] = useState(false);
+  // Eliminamos setEditing ya que no se usa
   const [editContent, setEditContent] = useState(post.content);
   const [saving, setSaving] = useState(false);
   const [confirmDelete, setConfirmDelete] = useState(false);
@@ -232,7 +232,7 @@ export default function PostCard({ post, deleting, onDelete }: PostCardProps) {
           </div>
 
           {/* Author actions - COMPLETO con editar y borrar */}
-          {isAuthor && !editing && (
+          {isAuthor && (
             <div className="flex items-center gap-1">
               <button
                 onClick={() => {
