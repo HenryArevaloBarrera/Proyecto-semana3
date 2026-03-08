@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="64" y2="64" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#3b82f6"/>
+      <stop offset="100%" stop-color="#6366f1"/>
+    </linearGradient>
+    <linearGradient id="shine" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#ffffff" stop-opacity="0.18"/>
+      <stop offset="100%" stop-color="#ffffff" stop-opacity="0"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Burbuja de chat redondeada -->
+  <rect x="4" y="4" width="56" height="48" rx="14" ry="14" fill="url(#bg)"/>
+
+  <!-- Triángulo de la burbuja (cola inferior izquierda) -->
+  <path d="M14 52 L8 62 L26 52 Z" fill="url(#bg)"/>
+
+  <!-- Brillo superior -->
+  <rect x="4" y="4" width="56" height="24" rx="14" ry="14" fill="url(#shine)"/>
+
+  <!-- Letra S -->
+  <text
+    x="32"
+    y="37"
+    text-anchor="middle"
+    font-family="system-ui, -apple-system, sans-serif"
+    font-size="28"
+    font-weight="700"
+    letter-spacing="-1"
+    fill="#ffffff"
+  >S</text>
+</svg>
