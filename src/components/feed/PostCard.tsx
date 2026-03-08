@@ -1,4 +1,4 @@
-quiero que las imagenes de aqui se muestren como en un carrucel import { useState } from "react";
+import { useState } from "react";
 import { useAuth } from "../../context/useAuth";
 import { toggleLike, updatePost } from "../../services/post.service";
 import type { Post } from "../../types/post";
@@ -39,18 +39,16 @@ export default function PostCard({ post, deleting, onDelete }: PostCardProps) {
   const [saving, setSaving] = useState(false);
 
   const [confirmDelete, setConfirmDelete] = useState(false);
-
   const [liking, setLiking] = useState(false);
   const [showLikes, setShowLikes] = useState(false);
+  const [currentIndex, setCurrentIndex] = useState(0); // índice del carrusel
 
   if (!user) return null;
 
   const isAuthor = user.uid === post.author.uid;
-
   const likes = post.likes ?? [];
   const isLiked = likes.some((l) => l.uid === user.uid);
   const likeCount = likes.length;
-
   const createdAt = post.createdAt?.toDate?.() ?? new Date();
 
   const handleLike = async () => {
@@ -70,14 +68,11 @@ export default function PostCard({ post, deleting, onDelete }: PostCardProps) {
 
   const handleSave = async () => {
     const trimmed = editContent.trim();
-
     if (!trimmed || trimmed === post.content) {
       setEditing(false);
       return;
     }
-
     setSaving(true);
-
     try {
       await updatePost(post.id, trimmed);
       setEditing(false);
@@ -104,7 +99,6 @@ export default function PostCard({ post, deleting, onDelete }: PostCardProps) {
         ${deleting ? "opacity-50 pointer-events-none" : ""}`}
     >
       {/* HEADER */}
-
       <div className="flex items-start justify-between mb-3">
         <div className="flex items-center gap-3">
           {post.author.photoURL ? (
@@ -118,12 +112,10 @@ export default function PostCard({ post, deleting, onDelete }: PostCardProps) {
               {authorInitials}
             </div>
           )}
-
           <div>
             <p className="text-sm font-semibold text-white">
               {post.author.displayName || "Anónimo"}
             </p>
-
             <p className="text-xs text-slate-500">{timeAgo(createdAt)}</p>
           </div>
         </div>
@@ -172,7 +164,6 @@ export default function PostCard({ post, deleting, onDelete }: PostCardProps) {
       </div>
 
       {/* CONTENIDO */}
-
       {editing ? (
         <div className="mb-3">
           <textarea
@@ -181,7 +172,6 @@ export default function PostCard({ post, deleting, onDelete }: PostCardProps) {
             rows={3}
             className="w-full bg-white/5 border border-white/10 rounded-xl p-3 text-sm text-white resize-none"
           />
-
           <div className="flex justify-end gap-2 mt-2">
             <button
               onClick={() => setEditing(false)}
@@ -189,7 +179,6 @@ export default function PostCard({ post, deleting, onDelete }: PostCardProps) {
             >
               Cancelar
             </button>
-
             <button
               onClick={handleSave}
               disabled={saving || !editContent.trim()}
@@ -209,34 +198,61 @@ export default function PostCard({ post, deleting, onDelete }: PostCardProps) {
         </p>
       )}
 
-      {/* MEDIA */}
-
+      {/* MEDIA COMO CARRUSEL */}
       {!editing && post.media && post.media.length > 0 && (
-        <div className="grid grid-cols-2 gap-2 mb-4">
-          {post.media.map((media: any, index: number) => {
-            const url = typeof media === "string" ? media : media?.url;
+        <div className="mb-4 relative w-full max-h-96 overflow-hidden rounded-xl">
+          <img
+            src={
+              typeof post.media[currentIndex] === "string"
+                ? post.media[currentIndex]
+                : post.media[currentIndex]?.url
+            }
+            alt={`post-${currentIndex}`}
+            loading="lazy"
+            className="w-full max-h-96 object-cover rounded-xl transition-all duration-300"
+          />
 
-            if (!url) return null;
+          {/* Botones anterior y siguiente */}
+          {post.media.length > 1 && (
+            <>
+              <button
+                onClick={() =>
+                  setCurrentIndex(
+                    (prev) => (prev - 1 + post.media.length) % post.media.length
+                  )
+                }
+                className="absolute top-1/2 left-2 -translate-y-1/2 bg-black/30 text-white p-1 rounded-full hover:bg-black/50 transition"
+              >
+                &#8249;
+              </button>
+              <button
+                onClick={() =>
+                  setCurrentIndex((prev) => (prev + 1) % post.media.length)
+                }
+                className="absolute top-1/2 right-2 -translate-y-1/2 bg-black/30 text-white p-1 rounded-full hover:bg-black/50 transition"
+              >
+                &#8250;
+              </button>
+            </>
+          )}
 
-            const optimizedUrl = url.includes("/upload/")
-              ? url.replace("/upload/", "/upload/f_auto,q_auto/")
-              : url;
-
-            return (
-              <img
-                key={index}
-                src={optimizedUrl}
-                alt="post"
-                loading="lazy"
-                className="w-full max-h-96 object-cover rounded-xl"
-              />
-            );
-          })}
+          {/* Indicadores de puntos */}
+          {post.media.length > 1 && (
+            <div className="flex justify-center mt-2 gap-1">
+              {post.media.map((_, idx) => (
+                <span
+                  key={idx}
+                  className={`w-2 h-2 rounded-full ${
+                    idx === currentIndex ? "bg-white" : "bg-white/30"
+                  }`}
+                />
+              ))}
+            </div>
+          )}
         </div>
       )}
 
       {/* LIKES */}
-
       {!editing && (
         <div className="pt-3 border-t border-white/5">
           <div className="flex items-center gap-3">
@@ -253,7 +269,6 @@ export default function PostCard({ post, deleting, onDelete }: PostCardProps) {
                   className={`w-4 h-4 ${isLiked ? "fill-rose-400" : ""}`}
                 />
               )}
-
               <span className="text-xs font-medium">
                 {likeCount > 0 ? likeCount : ""}
               </span>
@@ -264,12 +279,7 @@ export default function PostCard({ post, deleting, onDelete }: PostCardProps) {
                 onClick={() => setShowLikes(!showLikes)}
                 className="flex items-center gap-1 text-xs text-slate-500"
               >
-                {showLikes ? (
-                  <ChevronUp className="w-3 h-3" />
-                ) : (
-                  <ChevronDown className="w-3 h-3" />
-                )}
-
+                {showLikes ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />}
                 {showLikes ? "Ocultar" : "Ver likes"}
               </button>
             )}
