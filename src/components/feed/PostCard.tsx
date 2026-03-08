@@ -1,4 +1,4 @@
-import { useState } from "react";
+quiero que las imagenes de aqui se muestren como en un carrucel import { useState } from "react";
 import { useAuth } from "../../context/useAuth";
 import { toggleLike, updatePost } from "../../services/post.service";
 import type { Post } from "../../types/post";
