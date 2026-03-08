@@ -76,34 +76,6 @@ export default function PostCard({ post, deleting, onDelete }: PostCardProps) {
     }
   };
 
-  const handleSave = async () => {
-
-    const trimmed = editContent.trim();
-
-    if (!trimmed || trimmed === post.content) {
-      setEditing(false);
-      return;
-    }
-
-    setSaving(true);
-
-    try {
-
-      await updatePost(post.id, trimmed);
-      setEditing(false);
-
-    } catch (e) {
-
-      console.error("Error al editar post:", e);
-
-    } finally {
-
-      setSaving(false);
-
-    }
-
-  };
-
   const uploadFiles = async (files: File[]): Promise<MediaItem[]> => {
 
     const uploads = await Promise.all(
@@ -348,7 +320,7 @@ export default function PostCard({ post, deleting, onDelete }: PostCardProps) {
           </div>
         )}
 
-        {/* LIKES - CORREGIDO con botón "Ver likes" y lista */}
+        {/* LIKES */}
         <div className="pt-3 border-t border-white/5">
           <div className="flex items-center gap-3">
             <button
