@@ -45,7 +45,6 @@ export default function PostCard({ post, deleting, onDelete }: PostCardProps) {
 
   if (!user) return null;
 
-  const isCurrentUser = (uid: string) => uid === user.uid;
   const isAuthor = user.uid === post.author.uid;
 
   const likes = post.likes ?? [];
@@ -280,3 +279,4 @@ export default function PostCard({ post, deleting, onDelete }: PostCardProps) {
     </div>
   );
 }
+
